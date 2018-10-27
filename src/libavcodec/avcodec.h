@@ -58,22 +58,22 @@ typedef struct AVFrame
 typedef struct AVCodecContext
 {
     int bit_rate;
-    int frame_number; // audio or video frame number
+    int frame_number; //  if decode ,total number of frames returned from the decoder so far. if encoding,
 
     unsigned char *extradata; // Codec的私有数据，对Audio是WAVEFORMATEX结构扩展字节。
-    int extradata_size; // 对Video是BITMAPINFOHEADER后的扩展字节
+    int extradata_size;       // 对Video是BITMAPINFOHEADER后的扩展字节
 
-    int width, height;
+    int width, height; //video only
 
     enum PixelFormat pix_fmt;
 
-    int sample_rate; // samples per sec  // audio only
+    int sample_rate; // samples per sec, audio only
     int channels;
-    int bits_per_sample;
-    int block_align;
+    int bits_per_sample;// bits per sample/pixel from the demuxer 
+    int block_align; // number of bytes per packet if constant and known or 0
 
-    struct AVCodec *codec;
-    void *priv_data;
+    struct AVCodec *codec;//具体的解码器ptr
+    void *priv_data;//具体解码器属性，如MsrleContext
 
     enum CodecType codec_type; // see CODEC_TYPE_xxx
     enum CodecID codec_id; // see CODEC_ID_xxx
@@ -82,8 +82,8 @@ typedef struct AVCodecContext
     void(*release_buffer)(struct AVCodecContext *c, AVFrame *pic);
     int(*reget_buffer)(struct AVCodecContext *c, AVFrame *pic);
 
-    int internal_buffer_count;
-    void *internal_buffer;
+    int internal_buffer_count;//internal_buffer 大小
+    void *internal_buffer; //内部buffer
 
     struct AVPaletteControl *palctrl;
 }AVCodecContext;

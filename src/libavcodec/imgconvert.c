@@ -9,17 +9,17 @@
 #define FF_COLOR_YUV      2 // YUV color space. 16 <= Y <= 235, 16 <= U, V <= 240
 #define FF_COLOR_YUV_JPEG 3 // YUV color space. 0 <= Y <= 255, 0 <= U, V <= 255
 
-#define FF_PIXEL_PLANAR   0 // each channel has one component in AVPicture
-#define FF_PIXEL_PACKED   1 // only one components containing all the channels
-#define FF_PIXEL_PALETTE  2 // one components containing indexes for a palette
+#define FF_PIXEL_PLANAR   0 // each channel has one component in AVPicture       planar格式
+#define FF_PIXEL_PACKED   1 // only one components containing all the channels    packed格式
+#define FF_PIXEL_PALETTE  2 // one components containing indexes for a palette     packed格式，带调色板
 
-typedef struct PixFmtInfo
+typedef struct PixFmtInfo  //图像格式信息类型
 {
     const char *name;
-    uint8_t nb_channels; // number of channels (including alpha)
+    uint8_t nb_channels; // number of channels (including alpha) 通道数，平面数
     uint8_t color_type; // color type (see FF_COLOR_xxx constants)
     uint8_t pixel_type; // pixel storage type (see FF_PIXEL_xxx constants)
-    uint8_t is_alpha; // true if alpha can be specified
+    uint8_t is_alpha;   // true if alpha can be specified
     uint8_t x_chroma_shift; // X chroma subsampling factor is 2 ^ shift
     uint8_t y_chroma_shift; // Y chroma subsampling factor is 2 ^ shift
     uint8_t depth; // bit depth of the color components

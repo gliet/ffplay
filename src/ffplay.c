@@ -46,31 +46,31 @@ typedef struct VideoPicture
 
 typedef struct VideoState
 {
-    SDL_Thread *parse_tid;
-    SDL_Thread *video_tid;
+    SDL_Thread *parse_tid;// demux thread tid
+    SDL_Thread *video_tid;// video decoce thread tid
 
     int abort_request;
 
     AVFormatContext *ic;
 
-    int audio_stream; 
-    int video_stream;
+    int audio_stream; //audio stream index in AVStream[]
+    int video_stream; //video stream index in AVStream[]
 
-    AVStream *audio_st;
-    AVStream *video_st;
+    AVStream *audio_st; // audio stream ptr
+    AVStream *video_st; //vidwo stream ptr
 
-    PacketQueue audioq;
+    PacketQueue audioq; //audio packet queue
     PacketQueue videoq;
 
-    VideoPicture pictq[VIDEO_PICTURE_QUEUE_SIZE];
+    VideoPicture pictq[VIDEO_PICTURE_QUEUE_SIZE];//videoPicture array
     double frame_last_delay;
 
-    uint8_t audio_buf[(AVCODEC_MAX_AUDIO_FRAME_SIZE *3) / 2];
-    unsigned int audio_buf_size;
-    int audio_buf_index;
-    AVPacket audio_pkt;
-    uint8_t *audio_pkt_data;
-    int audio_pkt_size;
+    uint8_t audio_buf[(AVCODEC_MAX_AUDIO_FRAME_SIZE *3) / 2];//audio buff array for output
+    unsigned int audio_buf_size;//the audio data size in audio_buf
+    int audio_buf_index;//the ptr between has output and will output in audio_buff
+    AVPacket audio_pkt;//used for  save some tmp data ,when the audio packet have more than one frames, 
+    uint8_t *audio_pkt_data; // data prt in audio_pkt
+    int audio_pkt_size;		//size of data in audio_pkt
 
     SDL_mutex *video_decoder_mutex;
     SDL_mutex *audio_decoder_mutex;
@@ -359,7 +359,7 @@ static int audio_decode_frame(VideoState *is, uint8_t *audio_buf, double *pts_pt
     }
 }
 
-/* prepare a new audio buffer */
+/* prepare a new audio buffer opaque:videostate ptr; stream: dest addr audio request writing to; len: request audio data len*/
 void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
 {
     VideoState *is = opaque;
@@ -368,7 +368,7 @@ void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
 
     while (len > 0)
     {
-        if (is->audio_buf_index >= is->audio_buf_size)
+        if (is->audio_buf_index >= is->audio_buf_size)// if the audio data in audio_buf is empty or all the audio data has output 
         {
             audio_size = audio_decode_frame(is, is->audio_buf, &pts);
             if (audio_size < 0)

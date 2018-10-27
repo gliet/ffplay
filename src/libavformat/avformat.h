@@ -42,10 +42,10 @@ typedef struct AVPacket
     int64_t pts; // presentation time stamp in time_base units
     int64_t dts; // decompression time stamp in time_base units
     int64_t pos; // byte position in stream, -1 if unknown
-    uint8_t *data;
-    int size;
-    int stream_index;
-    int flags;
+    uint8_t *data; // audio data ptr
+    int size;	//size of data
+    int stream_index;// index in AVstream[];
+    int flags;// packet flags, such as  is or not a keyframe
     void(*destruct)(struct AVPacket*);
 } AVPacket;
 
